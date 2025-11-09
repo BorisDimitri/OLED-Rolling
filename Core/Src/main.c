@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "OLED.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,7 +89,12 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  /*模块初始化*/
+  OLED_Init(); // OLED初始化
 
+  /*OLED显示*/
+  
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -97,7 +102,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+		for(int i=1;i<=5;i++)
+		{
+			OLED_ShowCN(3,i,0);
+			OLED_ShowCN(3,i+1,1);
+			OLED_ShowCN(3,i+2,2);
+			
+			HAL_Delay(500);
+			OLED_Clear();
+		}
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
