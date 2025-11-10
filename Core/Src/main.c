@@ -18,12 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +58,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart1_tx;
 /* USER CODE END 0 */
 
 /**
@@ -87,30 +91,58 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM1_Init();
+  MX_TIM2_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  /*模块初始化*/
+  
+  
   OLED_Init(); // OLED初始化
+  uint8_t DMA_receive_buffer[20];
+  uint8_t Rxlen;
 
-  /*OLED显示*/
-  
-  
   /* USER CODE END 2 */
-
+    
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    for(int i=1;i<=5;i++)
+    {
+        OLED_ShowCN(3,i,0);
+        OLED_ShowCN(3,i+1,1);
+        OLED_ShowCN(3,i+2,2);
+        
+        HAL_Delay(500);
+        OLED_Clear();
+    }
+    
+    HAL_UART_Receive_DMA(&huart1,DMA_receive_buffer,10);
+    
+    
+    if(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET) {
+        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
+        
+        // 停止 DMA 接收
+        HAL_UART_DMAStop(&huart1);
+        
+        // 计算接收长度
+        Rxlen = __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);
+        
+        HAL_UART_Transmit_DMA(&huart1,DMA_receive_buffer,Rxlen);
+        
+        
+        //__HAL_TIM_SetCompare(htim2, TIM_CHANNEL_1, duty);
+        
+        Rxlen = 0;
+        memset(DMA_receive_buffer,0,sizeof(DMA_receive_buffer));
+        HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
+    }
+    
+    
     /* USER CODE END WHILE */
-		for(int i=1;i<=5;i++)
-		{
-			OLED_ShowCN(3,i,0);
-			OLED_ShowCN(3,i+1,1);
-			OLED_ShowCN(3,i+2,2);
-			
-			HAL_Delay(500);
-			OLED_Clear();
-		}
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
