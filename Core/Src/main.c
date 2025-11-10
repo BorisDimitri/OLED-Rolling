@@ -105,15 +105,20 @@ int main(void)
     
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  
   while (1)
-  {
+  {    
     for(int i=1;i<=5;i++)
     {
         OLED_ShowCN(3,i,0);
         OLED_ShowCN(3,i+1,1);
         OLED_ShowCN(3,i+2,2);
         
-        HAL_Delay(500);
+        for(int j = 1;j <= 10;j ++) 
+        {
+            LightPWM();
+            HAL_Delay(30);
+        }
         OLED_Clear();
     }
     

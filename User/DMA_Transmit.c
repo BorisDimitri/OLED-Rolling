@@ -25,6 +25,19 @@ void receiveLightCommand()
         
         Rxlen = 0;
         memset(DMA_receive_buffer,0,sizeof(DMA_receive_buffer));
-        HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
     }
+    HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
 }
+
+uint8_t LightPWMFlag = 0;
+uint16_t duty_num = 10;
+void LightPWM()
+{
+    if(LightPWMFlag==0) duty_num = duty_num + 10;	
+    if(LightPWMFlag==1) duty_num = duty_num - 10;	
+    
+    if(duty_num > 500) LightPWMFlag=1;	
+    if(duty_num < 10) LightPWMFlag=0;	
+    __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_1,duty_num);
+}
+
