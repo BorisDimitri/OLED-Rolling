@@ -26,7 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
-#include "string.h"
+#include "DMA_Transmit.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,8 +99,7 @@ int main(void)
   
   
   OLED_Init(); // OLED初始化
-  uint8_t DMA_receive_buffer[20];
-  uint8_t Rxlen;
+
 
   /* USER CODE END 2 */
     
@@ -120,26 +119,7 @@ int main(void)
     
     HAL_UART_Receive_DMA(&huart1,DMA_receive_buffer,10);
     
-    
-    if(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET) {
-        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
-        
-        // 停止 DMA 接收
-        HAL_UART_DMAStop(&huart1);
-        
-        // 计算接收长度
-        Rxlen = __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);
-        
-        HAL_UART_Transmit_DMA(&huart1,DMA_receive_buffer,Rxlen);
-        
-        
-        //__HAL_TIM_SetCompare(htim2, TIM_CHANNEL_1, duty);
-        
-        Rxlen = 0;
-        memset(DMA_receive_buffer,0,sizeof(DMA_receive_buffer));
-        HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
-    }
-    
+    receiveLightCommand();
     
     /* USER CODE END WHILE */
 
