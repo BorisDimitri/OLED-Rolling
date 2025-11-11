@@ -1,4 +1,4 @@
-//#include "stm32f10x.h"
+// #include "stm32f10x.h"
 #include "OLED_Font.h"
 #include "OLED.h"
 
@@ -7,7 +7,6 @@
 #define OLED_W_SDA(x) HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, (GPIO_PinState)(x))
 
 /*引脚初始化*/
-
 
 /**
  * @brief  I2C开始
@@ -135,22 +134,21 @@ void OLED_ShowChar(uint8_t Line, uint8_t Column, char Char)
 
 void OLED_ShowCN(uint8_t Line, uint8_t Column, uint8_t Num)
 {
-	
+
 	uint8_t i;
-	uint8_t wide=20;//字宽
-	
-	OLED_SetCursor((Line-1)*2, (Column-1)*wide);		//参数1:把光标设置在第几页. 参数2:把光标设置在第几列
+	uint8_t wide = 20; // 字宽
+
+	OLED_SetCursor((Line - 1) * 2, (Column - 1) * wide); // 参数1:把光标设置在第几页. 参数2:把光标设置在第几列
 	for (i = 0; i < wide; i++)
 	{
-		OLED_WriteData(chineseFont[Num][i]);			//显示上半部分内容
-	}
-	
-	OLED_SetCursor((Line-1)*2-1,(Column-1)*wide);		
-	for (i = 0; i < wide; i++)
-	{
-		OLED_WriteData(chineseFont[Num][i+wide]);		//显示下半部分内容
+		OLED_WriteData(chineseFont[Num][i]); // 显示上半部分内容
 	}
 
+	OLED_SetCursor((Line - 1) * 2 - 1, (Column - 1) * wide);
+	for (i = 0; i < wide; i++)
+	{
+		OLED_WriteData(chineseFont[Num][i + wide]); // 显示下半部分内容
+	}
 }
 
 /**
@@ -285,45 +283,45 @@ void OLED_Init(void)
 			;
 	}
 
-	//OLED_I2C_Init(); // 端口初始化
+	// OLED_I2C_Init(); // 端口初始化
 
-	OLED_WriteCommand(0xAE);	//关闭显示
-	
-	OLED_WriteCommand(0xD5);	//设置显示时钟分频比/振荡器频率
+	OLED_WriteCommand(0xAE); // 关闭显示
+
+	OLED_WriteCommand(0xD5); // 设置显示时钟分频比/振荡器频率
 	OLED_WriteCommand(0x80);
-	
-	OLED_WriteCommand(0xA8);	//设置多路复用率
-	OLED_WriteCommand(0x3F);
-	
-	OLED_WriteCommand(0xD3);	//设置显示偏移
-	OLED_WriteCommand(0x00);
-	
-	OLED_WriteCommand(0x40);	//设置显示开始行
-	
-	OLED_WriteCommand(0xA1);	//设置左右方向，0xA1正常 0xA0左右反置
-	
-	OLED_WriteCommand(0xC0);	//设置上下方向，0xC8正常 0xC0上下反置
 
-	OLED_WriteCommand(0xDA);	//设置COM引脚硬件配置
+	OLED_WriteCommand(0xA8); // 设置多路复用率
+	OLED_WriteCommand(0x3F);
+
+	OLED_WriteCommand(0xD3); // 设置显示偏移
+	OLED_WriteCommand(0x00);
+
+	OLED_WriteCommand(0x40); // 设置显示开始行
+
+	OLED_WriteCommand(0xA1); // 设置左右方向，0xA1正常 0xA0左右反置
+
+	OLED_WriteCommand(0xC0); // 设置上下方向，0xC8正常 0xC0上下反置
+
+	OLED_WriteCommand(0xDA); // 设置COM引脚硬件配置
 	OLED_WriteCommand(0x12);
-	
-	OLED_WriteCommand(0x81);	//设置对比度控制
+
+	OLED_WriteCommand(0x81); // 设置对比度控制
 	OLED_WriteCommand(0xCF);
 
-	OLED_WriteCommand(0xD9);	//设置预充电周期
+	OLED_WriteCommand(0xD9); // 设置预充电周期
 	OLED_WriteCommand(0xF1);
 
-	OLED_WriteCommand(0xDB);	//设置VCOMH取消选择级别
+	OLED_WriteCommand(0xDB); // 设置VCOMH取消选择级别
 	OLED_WriteCommand(0x30);
 
-	OLED_WriteCommand(0xA4);	//设置整个显示打开/关闭
+	OLED_WriteCommand(0xA4); // 设置整个显示打开/关闭
 
-	OLED_WriteCommand(0xA6);	//设置正常/倒转显示
+	OLED_WriteCommand(0xA6); // 设置正常/倒转显示
 
-	OLED_WriteCommand(0x8D);	//设置充电泵
+	OLED_WriteCommand(0x8D); // 设置充电泵
 	OLED_WriteCommand(0x14);
 
-	OLED_WriteCommand(0xAF);	//开启显示
-		
-	OLED_Clear();				//OLED清屏
+	OLED_WriteCommand(0xAF); // 开启显示
+
+	OLED_Clear(); // OLED清屏
 }
