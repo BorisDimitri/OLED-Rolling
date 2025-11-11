@@ -103,7 +103,7 @@ int main(void)
 
 
   /* USER CODE END 2 */
-    
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   
@@ -118,13 +118,13 @@ int main(void)
         
         for(int j = 1;j <= 10;j ++) 
         {
-            LightPWM();
+            vLightPWM();
             HAL_Delay(30);
         }
         OLED_Clear();
     }
     
-    receiveLightCommand();
+    vreceiveLightCommand();
     
     /* USER CODE END WHILE */
 

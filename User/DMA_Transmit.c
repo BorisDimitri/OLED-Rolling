@@ -1,7 +1,7 @@
 #include "DMA_Transmit.h"
 
 
-uint8_t StringToUint8(uint8_t* str, uint8_t len)
+uint16_t StringToUint16(uint8_t* str, uint8_t len)
 {
     uint8_t result = 0;
     for(uint8_t i=0;i<len-1;i++)
@@ -9,7 +9,14 @@ uint8_t StringToUint8(uint8_t* str, uint8_t len)
     return result;
 }
 
-void receiveLightCommand()
+void vResetDMAReceive()
+{
+    Rxlen = 0;
+    memset(DMA_receive_buffer,0,sizeof(DMA_receive_buffer));
+    HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
+}
+
+void vreceiveLightCommand()
 {
     if(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET) {
         
@@ -22,27 +29,48 @@ void receiveLightCommand()
         
         HAL_UART_Transmit_DMA(&huart1,(uint8_t*)"ok\n",3);
         HAL_Delay(30);
-        HAL_UART_Transmit_DMA(&huart1,DMA_receive_buffer,Rxlen);
+        
+        uint8_t index = 0;
+        while(index < Rxlen && DMA_receive_buffer[index] != 0xFA)
+            index ++;
+        if(index > Rxlen) // Input invalid 
+        {
+            vResetDMAReceive();
+            return ;
+        }
+        
+        HAL_UART_Transmit_DMA(&huart1,DMA_receive_buffer+index,2);
         HAL_Delay(30);
         
-        //__HAL_TIM_SetCompare(htim2, TIM_CHANNEL_1, duty);
+        if(DMA_receive_buffer[index + 1] >= 0 && DMA_receive_buffer[index+1] <= 100)
+            vChangeLightPWMMaximum(DMA_receive_buffer[index+1]);
+        else{
+            HAL_UART_Transmit_DMA(&huart1,(uint8_t*)"Overflow\n",9);
+            HAL_Delay(30);
+        }
         
-        Rxlen = 0;
-        memset(DMA_receive_buffer,0,sizeof(DMA_receive_buffer));
-        HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
+        vResetDMAReceive();
     }
-    
 }
+
+
 
 uint8_t LightPWMFlag = 0;
 uint16_t duty_num = 10;
-void LightPWM()
+uint8_t MaxLightCCR = 50;
+void vChangeLightPWMMaximum(uint8_t MAXCCR)
 {
-    if(LightPWMFlag==0) duty_num = duty_num + 10;	
-    if(LightPWMFlag==1) duty_num = duty_num - 10;	
+    MaxLightCCR = MAXCCR;
+}
+
+void vLightPWM()
+{
+    if(LightPWMFlag==0) duty_num = duty_num + 5;	
+    if(LightPWMFlag==1) duty_num = duty_num - 5;	
     
-    if(duty_num > 500) LightPWMFlag=1;	
-    if(duty_num < 10) LightPWMFlag=0;	
+    if(duty_num > MaxLightCCR) LightPWMFlag=1;	
+    if(duty_num < 5) LightPWMFlag=0;	
+    
     __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_1,duty_num);
 }
 

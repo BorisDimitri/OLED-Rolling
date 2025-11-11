@@ -12,7 +12,8 @@ extern TIM_HandleTypeDef htim2;
 static uint8_t DMA_receive_buffer[20];
 static uint8_t Rxlen;
 
-void receiveLightCommand();
-void LightPWM();
+void vreceiveLightCommand();
+void vChangeLightPWMMaximum(uint8_t MAXCCR);
+void vLightPWM();
 
 #endif
