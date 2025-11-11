@@ -99,6 +99,7 @@ int main(void)
   
   
   OLED_Init(); // OLED初始化
+  HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin, 1);
 
 
   /* USER CODE END 2 */
@@ -106,6 +107,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   
+  HAL_UART_Receive_DMA(&huart1,DMA_receive_buffer,10);
   while (1)
   {    
     for(int i=1;i<=5;i++)
@@ -121,8 +123,6 @@ int main(void)
         }
         OLED_Clear();
     }
-    
-    HAL_UART_Receive_DMA(&huart1,DMA_receive_buffer,10);
     
     receiveLightCommand();
     

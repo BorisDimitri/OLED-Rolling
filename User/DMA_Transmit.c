@@ -12,21 +12,26 @@ uint8_t StringToUint8(uint8_t* str, uint8_t len)
 void receiveLightCommand()
 {
     if(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET) {
+        
+        HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin, 0);
         __HAL_UART_CLEAR_IDLEFLAG(&huart1);
         
         HAL_UART_DMAStop(&huart1);
         
         Rxlen = __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);
         
+        HAL_UART_Transmit_DMA(&huart1,(uint8_t*)"ok\n",3);
+        HAL_Delay(30);
         HAL_UART_Transmit_DMA(&huart1,DMA_receive_buffer,Rxlen);
-        
+        HAL_Delay(30);
         
         //__HAL_TIM_SetCompare(htim2, TIM_CHANNEL_1, duty);
         
         Rxlen = 0;
         memset(DMA_receive_buffer,0,sizeof(DMA_receive_buffer));
+        HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
     }
-    HAL_UART_Receive_DMA(&huart1, (uint8_t*)DMA_receive_buffer, 10);
+    
 }
 
 uint8_t LightPWMFlag = 0;
