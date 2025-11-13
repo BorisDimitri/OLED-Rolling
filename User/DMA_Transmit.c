@@ -105,7 +105,17 @@ void vreceiveCommandFromComputer()
 
         HAL_UART_Transmit_DMA(&huart1, DMA_receive_buffer + index, datalen);
         HAL_Delay(30);
-
+        
+        HAL_StatusTypeDef FOCstate = HAL_UART_Transmit_DMA(&huart2, DMA_receive_buffer + index, datalen);
+        HAL_Delay(30);
+        
+        
+        *(DMA_receive_buffer + index) = FOCstate;
+        HAL_UART_Transmit_DMA(&huart1, DMA_receive_buffer + index, 2);
+        
+        
         vResetDMAReceive();
     }
 }
+
+//uint8_t u8Caculate

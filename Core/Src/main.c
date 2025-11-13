@@ -101,7 +101,7 @@ int main(void)
   OLED_Init(); // OLED初始化
   
   vResetDMAReceive();
-  HAL_UART_Receive_DMA(&huart1, DMA_receive_buffer, 30);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
